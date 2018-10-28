@@ -32,6 +32,7 @@ const bigG = {
   x: BigInteger(G.x, 16),
   y: BigInteger(G.y, 16)
 }
+const bigN = BigInteger(n, 16);
 
 // Cac ham` phụ trợ
 // Lấy thông điệp tu input
@@ -61,6 +62,13 @@ const toBinary = (bigP) => {
   return bigP.toString(2);
 }
 
+// Lay n bit trai nhat cua 1 so
+const leftMostBits = (bigNumber, n) => {
+  let temp = toBinary(bigNumber);       // Chuyen doi bigNumber thanh chuoi nhi phan
+  return  BigInteger(                   // Tra lai bigNumber ở dạng số Nguyên lớn
+          temp.substring(0,n), 2);      // Voi n bit dau tien cua chuoi
+}
+
 // Cong 2 diem (x1, y1) + (x2, y2)
 const pointAdding = ({ x1, y1 }, { x2, y2 }) => {
   // Ap dung cong thuc : tinh s trong giao trinh
@@ -72,7 +80,7 @@ const pointAdding = ({ x1, y1 }, { x2, y2 }) => {
   // Ap dung cong thuc : tinh x3 y3 trong giao trinh
   const x3 =
   s.pow(2).minus(x1).minus(x2).mod(bigP)             // x3 = s^2 −x1 −x2
-  .add(bigP).mod(bigP);                                 // Đổi kết quả về số dương (mod p) trong trường hợp modulo trả về âm
+  .add(bigP).mod(bigP);                              // Đổi kết quả về số dương (mod p) trong trường hợp modulo trả về âm
   const y3 =
   x1.minus(x3).multiply(s).minus(y1).mod(bigP)       // y3 = s(x1 −x3)−y1
   .add(bigP).mod(bigP);
@@ -131,3 +139,108 @@ const scalarMultiply = ({x, y}, k) => {
 /************************************/
 /********** Sinh khóa ***************/
 /************************************/
+
+// 1) Chon ngẫu nhiên d trong đoạn [1, n-1] lam khoa bi mat
+const d = randomBetween(0, n);
+console.log("Khoa bi mat: ");
+console.log(d.toString());
+// 2) Tinh diem Q = d G lam khoa cong khai
+const Q = scalarMultiply({ x: bigG.x, y: bigG.y}, d)
+console.log("Khoa cong khai: ");
+console.log("Qx");
+console.log(Q.x.toString());
+console.log("Qy");
+console.log(Q.y.toString());
+
+
+/*************************************/
+/********** Tao chu ky ***************/
+/*************************************/
+
+const createSignature = () => {
+  // 0) Cac bien phu
+  // So bit cua n
+  const nLength = toBinary(bigN).length;
+  // 1) Tính e = HASH(m), với HASH là hàm băm, su dung sha256 ( SHA-2 )
+  // Lay message nhap vao tu nguoi dung, doi sang hex, roi doi tiep sang Big Int
+  const e = BigInteger(sha256("Hello, I'm an hash"), 16);
+  // 2) Cho z bằng Ln bit trái nhất của e, với Ln (n_length) là độ dài bit của n
+  const z = leftMostBits(e, nLength);
+  console.log("bam 1");
+  console.log(z.toString());
+
+  while (true) {
+    // 3) Chọn một số nguyên ngẫu nhiên k trong khoảng [1, n-1]
+    const k = randomBetween(0, n);
+    // 4: Tính H (x1, y1) = k. G;
+    const H = scalarMultiply({ x: bigG.x, y: bigG.y }, k);
+    // 5: Tính r = x1 mod n. Nếu r = 0, quay lại bước 3.
+    // H.x tuong ung voi toa do x1
+    const r = H.x.mod(bigN);
+    // Quay lai 3) neu r = 0
+    if(r.isZero()){
+      continue;
+    }
+    // 6) Tính s =  k^-1 (z + r.dA) mod A . Nếu s = 0 thì quay lại bước 3.
+    const s =
+    r.multiply(d).add(z)      // (z + r.dA)
+    .divide(k)                //  .k^-1
+    .mod(bigN)
+    // Nếu s = 0 thì quay lại bước 3.
+    if (s.isZero()) {
+      continue;
+    }
+    else {
+      return {
+        r: r,
+        s: s
+      };
+    }
+  }
+}
+
+
+/******************************************/
+/********** Xac thuc chu ky ***************/
+/******************************************/
+
+const verifySignature = ({ r, s }) => {
+  // 1) Kiểm tra r và s có thuộc khoảng [1, n-1] hay không
+  if (r.gt(bigN) || r.lesser(1) || s.gt(bigN) || s.lesser(1)) {
+    return false;
+  }
+  // 0) Cac bien phu
+  // So bit cua n
+  const nLength = toBinary(bigN).length;
+  // 2) Tính e = HASH(m), với HASH là hàm băm, su dung sha256 ( SHA-2 )
+  // Lay message nhap vao tu nguoi dung, doi sang hex, roi doi tiep sang Big Int
+  const e = BigInteger(sha256("Hello, I'm an hash"), 16);
+  // 3) Cho z bằng Ln bit trái nhất của e, với Ln (n_length) là độ dài bit của n
+  const z = leftMostBits(e, nLength);
+  console.log("bam 2");
+  console.log(z.toString());
+  // 4) Tính w = s^-1 mod n
+  const w = s.modInv(bigN);
+  // 5) Tinh u1 = zw mod n && u2 = rw mod n
+  const u1 = z.multiply(w).mod(bigN);
+  const u2 = r.multiply(w).mod(bigN);
+  // Tính điểm C = u1 x G + u2  x Q. Neu chu ky hop le, Cx = r mod n
+  // Tinh u1 . G
+  const u1G = scalarMultiply({ x: bigG.x, y: bigG.y }, u1);
+  // Tinh u2 . Q
+  const u2Q = scalarMultiply({ x: Q.x, y: Q.y }, u2);
+  // Tinh C
+  const C = pointAdding({ x1: u1G.x, y1: u1G.y }, { x2: u2Q.x, y2: u2Q.y });
+  console.log(C.x.toString());
+  if( C.x.equals(r)) console.log("Chu ky la hop le")
+  else console.log("Sai cmm roi!");
+  return true;
+}
+
+const signature = createSignature();
+console.log("Chu ky so:");
+console.log("r:");
+console.log(signature.r.toString());
+console.log("s");
+console.log(signature.s.toString());
+const v = verifySignature(signature);

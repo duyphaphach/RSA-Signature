@@ -19,3 +19,8 @@ console.log(bigP.toString(2).length);
 // Test Doubling and Add
 const kq = scalarMultiply({ x: bigG.x, y: bigG.y }, bigP);
 console.log(kq);
+
+// Test tao chu ky so
+const signature = createSignature();
+console.log(signature.r.toString());
+console.log(signature.s.toString());

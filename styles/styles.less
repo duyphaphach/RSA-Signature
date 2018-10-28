@@ -1,0 +1,48 @@
+// out: ./styles.css, sourcemap: false, compress: true
+
+#particles-js {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: #cc3f4b;
+  background-image: url("");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+  z-index: -1;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+#main {
+  z-index: 1;
+  #section_1 {
+    .title {
+      color: white;
+    }
+  }
+  #section_2 {
+    .item {
+        .item-text {
+          height: 80vh;
+          background-color: white;
+          padding: 10px 20px;
+
+          border-radius: 3px;
+          -webkit-box-shadow: 0px 0px 10px 0px rgba(46,1,1,1);
+          -moz-box-shadow: 0px 0px 10px 0px rgba(46,1,1,1);
+          box-shadow: 0px 0px 10px 0px rgba(46,1,1,1);
+
+          img {
+            width: 120px;
+            height: auto;
+            border: 1px solid lighten(grey, 20%);
+            border-radius: 3px;
+            margin-bottom: 10px;
+          }
+        }
+    }
+  }
+}

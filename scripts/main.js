@@ -166,7 +166,7 @@ const createSignature = () => {
   const e = BigInteger(sha256("Hello, I'm an hash"), 16);
   // 2) Cho z bằng Ln bit trái nhất của e, với Ln (n_length) là độ dài bit của n
   const z = leftMostBits(e, nLength);
-  console.log("bam 1");
+  console.log("Hash 1");
   console.log(z.toString());
 
   while (true) {
@@ -217,7 +217,7 @@ const verifySignature = ({ r, s }) => {
   const e = BigInteger(sha256("Hello, I'm an hash"), 16);
   // 3) Cho z bằng Ln bit trái nhất của e, với Ln (n_length) là độ dài bit của n
   const z = leftMostBits(e, nLength);
-  console.log("bam 2");
+  console.log("Hash 2");
   console.log(z.toString());
   // 4) Tính w = s^-1 mod n
   const w = s.modInv(bigN);
@@ -231,6 +231,7 @@ const verifySignature = ({ r, s }) => {
   const u2Q = scalarMultiply({ x: Q.x, y: Q.y }, u2);
   // Tinh C
   const C = pointAdding({ x1: u1G.x, y1: u1G.y }, { x2: u2Q.x, y2: u2Q.y });
+  console.log("Cx");
   console.log(C.x.toString());
   if( C.x.equals(r)) console.log("Chu ky la hop le")
   else console.log("Sai cmm roi!");

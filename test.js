@@ -8,7 +8,7 @@ console.log(kq.x3.toString());
 console.log(kq.y3.toString());
 
 // Test pointDoubling
-const kq = pointDoubling({x1: BigInteger("2353455345345345345234"),y1: BigInteger("234194612478471498734") })
+const kq = pointDoubling({ x1: BigInteger("2353455345345345345234"),y1: BigInteger("234194612478471498734") })
 console.log(kq);
 console.log(kq.x3.toString());
 console.log(kq.y3.toString());

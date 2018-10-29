@@ -70,10 +70,10 @@ const leftMostBits = (bigNumber, n) => {
 const pointAdding = ({ x1, y1 }, { x2, y2 }) => {
   // Ap dung cong thuc : tinh s trong giao trinh
   const s =
-  y2.minus(y1)                  // y2 - y1
-  .multiply(x2.minus(x1).modInv(bigP))         // chia (x2 - x1)
-  .mod(bigP)                    // mod p
-  .add(bigP).mod(bigP);         // Đổi kết quả về số dương (mod p) trong trường hợp modulo trả về âm
+  y2.minus(y1)                          // y2 - y1
+  .multiply(x2.minus(x1).modInv(bigP))  // chia (x2 - x1)
+  .mod(bigP)                            // mod p
+  .add(bigP).mod(bigP);                 // Đổi kết quả về số dương (mod p) trong trường hợp modulo trả về âm
   // Ap dung cong thuc : tinh x3 y3 trong giao trinh
   const x3 =
   s.pow(2).minus(x1).minus(x2).mod(bigP)             // x3 = s^2 −x1 −x2
@@ -144,12 +144,8 @@ const scalarMultiply = ({x, y}, k) => {
 
 // 1) Chon ngẫu nhiên d trong đoạn [1, n-1] lam khoa bi mat
 const d = randomBetween(1, bigN.minus(1));
-
-
 // 2) Tinh diem Q = d G lam khoa cong khai
 const Q = scalarMultiply({ x: bigG.x, y: bigG.y}, d);
-
-
 
 
 /*************************************/
@@ -202,7 +198,6 @@ const createSignature = (message) => {
     }
   }
 }
-
 
 /******************************************/
 /********** Xac thuc chu ky ***************/

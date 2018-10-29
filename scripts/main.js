@@ -357,12 +357,28 @@ createSignatureButton.addEventListener('click', function() {
 //Event for send button
 sendButton.addEventListener('click', function() {
   const templateToRender =
-  `<div style="overflow-y: auto;">
+  `<div>
   <p>
   <span class="text-info">Alice, you got a message from Bob!</span>
   <br>
-  <p class="btn btn-primary btn-md" style="border-radius: 5px; max-width:235px; word-wrap:break-word;">
-  ${getInputMessage()}
+  <p class="btn btn-primary btn-md text-left" style="border-radius: 5px; max-width:235px; word-wrap:break-word;">
+  ${(function (){
+    const mess = getInputMessage();
+    const words = mess.split(' ');
+    let c = 0;
+    let res = '';
+    words.forEach( w => {
+      if (c < 22) {
+        c = c + w.length + 1;
+        res = res + w + ' ';
+      }else {
+        res = res + '</span><br><span>' + w + ' ';
+        c = 0;
+      }
+    });
+    return `<span>${res}</span>`;
+    }())
+  }
   </p>
   </p>
   </div>`

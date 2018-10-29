@@ -300,11 +300,11 @@ keygenButton.addEventListener('click', function() {
   const templateToRender =
   `<div>
   <p>
-  <span class="text-info font-weight-bold">Tạo khóa công khai</span>
+  <span class="text-info font-weight-bold">Tạo khóa</span>
   <br>
-  <br><span class=text-danger>Chọn d ngẫu nhiên: </span>
+  <br><span class=text-danger>Chọn d ngẫu nhiên làm khóa bí mật: </span>
   <br><span class=text-primary><b>d</b> = ${d}</span>
-  <br><span class=text-danger>Tính điểm Q = dG</span>
+  <br><span class=text-danger>Tính điểm Q = dG làm khóa công khai:</span>
   <br><span class=text-primary>Điểm Q:</span>
   <br><span class=text-primary><b>x</b>: ${Q.x.toString()}</span>
   <br><span class=text-primary><b>y</b>: ${Q.y.toString()}</span>

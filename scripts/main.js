@@ -15,10 +15,11 @@
 // Thư viện sử dụng: `BigInteger` để tính toán modulo số nguyên lớn, `sha256` thư viện tạo mã băm
 const BigInteger = require("big-integer");
 const sha256 = require('js-sha256');
+const $ = require('./jquery.min');
 
 // Các biến
-const a = 0;
-const b = 7;
+const a = "0";
+const b = "7";
 const p = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F";
 const n = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141";
 const G = {
@@ -26,12 +27,15 @@ const G = {
   y: "483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8"
 }
 
+// Convert cac bien sang So nguyen lon
 const bigP = BigInteger(p, 16);
 const bigG = {
   x: BigInteger(G.x, 16),
   y: BigInteger(G.y, 16)
 }
 const bigN = BigInteger(n, 16);
+const bigA = BigInteger(a, 16)
+
 
 // Cac ham` phụ trợ
 
@@ -47,9 +51,7 @@ const hexToDec = (hexString) => {
 
 // Sinh số ngẫu nhiên trong khoảng  min < x < max
 const randomBetween = (min, max) => {
-  minInt = BigInteger(min, 16);
-  maxInt = BigInteger(max, 16);
-  return BigInteger.randBetween(minInt, maxInt);
+  return BigInteger.randBetween(min, max);
 }
 
 // Doi so nguyen lon sang nhi phan - Dung cho Doubling-and-Add
@@ -69,7 +71,7 @@ const pointAdding = ({ x1, y1 }, { x2, y2 }) => {
   // Ap dung cong thuc : tinh s trong giao trinh
   const s =
   y2.minus(y1)                  // y2 - y1
-  .divide(x2.minus(x1))         // chia (x2 - x1)
+  .multiply(x2.minus(x1).modInv(bigP))         // chia (x2 - x1)
   .mod(bigP)                    // mod p
   .add(bigP).mod(bigP);         // Đổi kết quả về số dương (mod p) trong trường hợp modulo trả về âm
   // Ap dung cong thuc : tinh x3 y3 trong giao trinh
@@ -87,10 +89,10 @@ const pointAdding = ({ x1, y1 }, { x2, y2 }) => {
 const pointDoubling = ({ x1, y1 }) => {
   // Ap dung cong thuc : tinh s trong giao trinh
   const s =
-  x1.pow(2).multiply(3)         // 3(x1^2) + a = 3(x1^2) do đường cong ta chọn có a = 0
-  .divide(y1.multiply(2))       // chia 2y1
-  .mod(bigP)                    // mod p
-  .add(bigP).mod(bigP);         // Đổi kết quả về số dương (mod p) trong trường hợp modulo trả về âm
+  x1.pow(2).multiply(3).add(bigA)         // 3(x1^2) + a = 3(x1^2) do đường cong ta chọn có a = 0
+  .multiply(y1.multiply(2).modInv(bigP))  // chia 2y1 = nhân nghịch dảo vói 2y1
+  .mod(bigP)                              // mod p
+  .add(bigP).mod(bigP);                   // Đổi kết quả về số dương (mod p) trong trường hợp modulo trả về âm
   // Ap dung cong thuc : tinh x3 y3 trong giao trinh
   const x3 =
   s.pow(2).minus(x1).minus(x1).mod(bigP)             // x3 = s^2 −x1 −x2 = x3 = s^2 −x1 −x1 do P = Q
@@ -106,7 +108,12 @@ const pointDoubling = ({ x1, y1 }) => {
 const scalarMultiply = ({x, y}, k) => {
   let k_binary = toBinary(k);
   let isFirstBit = true;
-  // Khoi tao diem ban dau chinh bang G
+  // Cache gia tri cua diem bat dau
+  const basePoint = {
+    x: x,
+    y: y
+  }
+  // Khoi gia tri ban dau
   let endPoint = {
     x: x,
     y: y
@@ -125,7 +132,7 @@ const scalarMultiply = ({x, y}, k) => {
     // Neu bit = 1 ta thuc hien phep nhan doi, update lai endPoint, sau do + G, update endPoint lan 2
     if ( bit === "1" ) {
       endPoint = pointDoubling({ x1: endPoint.x, y1: endPoint.y });
-      endPoint = pointAdding({ x1: endPoint.x, y1: endPoint.y }, { x2: bigG.x, y2: bigG.y });
+      endPoint = pointAdding({ x1: endPoint.x, y1: endPoint.y }, { x2: basePoint.x, y2: basePoint.y });
     }
   }
   return endPoint;
@@ -136,16 +143,13 @@ const scalarMultiply = ({x, y}, k) => {
 /************************************/
 
 // 1) Chon ngẫu nhiên d trong đoạn [1, n-1] lam khoa bi mat
-const d = randomBetween(1, n);
-console.log("Khoa bi mat: ");
-console.log(d.toString());
+const d = randomBetween(1, bigN.minus(1));
+
+
 // 2) Tinh diem Q = d G lam khoa cong khai
-const Q = scalarMultiply({ x: bigG.x, y: bigG.y}, d)
-console.log("Khoa cong khai: ");
-console.log("Qx");
-console.log(Q.x.toString());
-console.log("Qy");
-console.log(Q.y.toString());
+const Q = scalarMultiply({ x: bigG.x, y: bigG.y}, d);
+
+
 
 
 /*************************************/
@@ -164,10 +168,10 @@ const createSignature = (message) => {
 
   while (true) {
     // 3) Chọn một số nguyên ngẫu nhiên k trong khoảng [1, n-1]
-    const k = randomBetween(1, n);
-    // 4: Tính H (x1, y1) = k. G;
+    const k = BigInteger(10);
+      // 4: Tính H (x1, y1) = k. G;
     const H = scalarMultiply({ x: bigG.x, y: bigG.y }, k);
-    // 5: Tính r = x1 mod n. Nếu r = 0, quay lại bước 3.
+        // 5: Tính r = x1 mod n. Nếu r = 0, quay lại bước 3.
     // H.x tuong ung voi toa do x1
     const r = H.x.mod(bigN);
     // Quay lai 3) neu r = 0
@@ -176,15 +180,16 @@ const createSignature = (message) => {
     }
     // 6) Tính s =  k^-1 (z + r.dA) mod A . Nếu s = 0 thì quay lại bước 3.
     const s =
-    r.multiply(d).add(z)      // (z + r.dA)
-    .divide(k)                //  .k^-1
-    .mod(bigN)
+    r.multiply(d).add(z)                     // (z + r.dA)
+    .multiply(k.modInv(bigN))                //  .k^-1
+    .mod(bigN)                               // mod n
+    .add(bigN).mod(bigN);                    // Đảm bảo s là số dương
     // Nếu s = 0 thì quay lại bước 3.
     if (s.isZero()) {
       continue;
     }
     else {
-      return {
+          return {
         pair: {
           r: r,
           s: s
@@ -214,17 +219,21 @@ const verifySignature = ({ r, s }, message) => {
   // 2) Tính e = HASH(m), với HASH là hàm băm, su dung sha256 ( SHA-2 )
   // Lay message nhap vao tu nguoi dung, doi sang hex, roi doi tiep sang Big Int
   const e = BigInteger(sha256(message), 16);
+
   // 3) Cho z bằng Ln bit trái nhất của e, với Ln (n_length) là độ dài bit của n
   const z = leftMostBits(e, nLength);
+
   // 4) Tính w = s^-1 mod n
   const w = s.modInv(bigN);
+
   // 5) Tinh u1 = zw mod n && u2 = rw mod n
   const u1 = z.multiply(w).mod(bigN);
   const u2 = r.multiply(w).mod(bigN);
-  // Tính điểm C = u1 x G + u2  x Q. Neu chu ky hop le, Cx = r mod n
-  // Tinh u1 . G
+
+  // 6) Tính điểm C = u1 x G + u2  x Q. Neu chu ky hop le, Cx = r mod n
+  // Tinh u1 x G
   const u1G = scalarMultiply({ x: bigG.x, y: bigG.y }, u1);
-  // Tinh u2 . Q
+  // Tinh u2 x Q
   const u2Q = scalarMultiply({ x: Q.x, y: Q.y }, u2);
   // Tinh C
   const C = pointAdding({ x1: u1G.x, y1: u1G.y }, { x2: u2Q.x, y2: u2Q.y });

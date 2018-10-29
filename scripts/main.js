@@ -17,7 +17,6 @@ const BigInteger = require("big-integer");
 const sha256 = require('js-sha256');
 
 // Các biến
-const inputMessage = document.getElementById('inputMessage').value;
 const a = 0;
 const b = 7;
 const p = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F";
@@ -35,10 +34,6 @@ const bigG = {
 const bigN = BigInteger(n, 16);
 
 // Cac ham` phụ trợ
-// Lấy thông điệp tu input
-const getInputMessage = () => {
-  return inputMessage;
-}
 
 // Băm thông điệp dung ham bam sha256, return ma bam
 const hashMessage = (message) => {
@@ -141,7 +136,7 @@ const scalarMultiply = ({x, y}, k) => {
 /************************************/
 
 // 1) Chon ngẫu nhiên d trong đoạn [1, n-1] lam khoa bi mat
-const d = randomBetween(0, n);
+const d = randomBetween(1, n);
 console.log("Khoa bi mat: ");
 console.log(d.toString());
 // 2) Tinh diem Q = d G lam khoa cong khai
@@ -157,21 +152,19 @@ console.log(Q.y.toString());
 /********** Tao chu ky ***************/
 /*************************************/
 
-const createSignature = () => {
+const createSignature = (message) => {
   // 0) Cac bien phu
   // So bit cua n
   const nLength = toBinary(bigN).length;
   // 1) Tính e = HASH(m), với HASH là hàm băm, su dung sha256 ( SHA-2 )
   // Lay message nhap vao tu nguoi dung, doi sang hex, roi doi tiep sang Big Int
-  const e = BigInteger(sha256("Hello, I'm an hash"), 16);
+  const e = BigInteger(sha256(message), 16);
   // 2) Cho z bằng Ln bit trái nhất của e, với Ln (n_length) là độ dài bit của n
   const z = leftMostBits(e, nLength);
-  console.log("Hash 1");
-  console.log(z.toString());
 
   while (true) {
     // 3) Chọn một số nguyên ngẫu nhiên k trong khoảng [1, n-1]
-    const k = randomBetween(0, n);
+    const k = randomBetween(1, n);
     // 4: Tính H (x1, y1) = k. G;
     const H = scalarMultiply({ x: bigG.x, y: bigG.y }, k);
     // 5: Tính r = x1 mod n. Nếu r = 0, quay lại bước 3.
@@ -192,9 +185,15 @@ const createSignature = () => {
     }
     else {
       return {
-        r: r,
-        s: s
-      };
+        pair: {
+          r: r,
+          s: s
+        },
+        e: e,
+        z: z,
+        k: k,
+        H: H,
+      }
     }
   }
 }
@@ -204,7 +203,7 @@ const createSignature = () => {
 /********** Xac thuc chu ky ***************/
 /******************************************/
 
-const verifySignature = ({ r, s }) => {
+const verifySignature = ({ r, s }, message) => {
   // 1) Kiểm tra r và s có thuộc khoảng [1, n-1] hay không
   if (r.gt(bigN) || r.lesser(1) || s.gt(bigN) || s.lesser(1)) {
     return false;
@@ -214,11 +213,9 @@ const verifySignature = ({ r, s }) => {
   const nLength = toBinary(bigN).length;
   // 2) Tính e = HASH(m), với HASH là hàm băm, su dung sha256 ( SHA-2 )
   // Lay message nhap vao tu nguoi dung, doi sang hex, roi doi tiep sang Big Int
-  const e = BigInteger(sha256("Hello, I'm an hash"), 16);
+  const e = BigInteger(sha256(message), 16);
   // 3) Cho z bằng Ln bit trái nhất của e, với Ln (n_length) là độ dài bit của n
   const z = leftMostBits(e, nLength);
-  console.log("Hash 2");
-  console.log(z.toString());
   // 4) Tính w = s^-1 mod n
   const w = s.modInv(bigN);
   // 5) Tinh u1 = zw mod n && u2 = rw mod n
@@ -231,17 +228,164 @@ const verifySignature = ({ r, s }) => {
   const u2Q = scalarMultiply({ x: Q.x, y: Q.y }, u2);
   // Tinh C
   const C = pointAdding({ x1: u1G.x, y1: u1G.y }, { x2: u2Q.x, y2: u2Q.y });
-  console.log("Cx");
-  console.log(C.x.toString());
-  if( C.x.equals(r)) console.log("Chu ky la hop le")
-  else console.log("Sai cmm roi!");
-  return true;
+  const info = C.x.equals(r) ? "Chữ ký hợp lệ" : "Chữ ký không hợp lệ";
+  return {
+    e: e,
+    z: z,
+    w: w,
+    u1: u1,
+    u2: u2,
+    C: C,
+    info:info
+  };
 }
 
-const signature = createSignature();
-console.log("Chu ky so:");
-console.log("r:");
-console.log(signature.r.toString());
-console.log("s");
-console.log(signature.s.toString());
-const v = verifySignature(signature);
+
+/******************************************/
+/********** Event handlers  ***************/
+/******************************************/
+
+// Cache elements
+const inputMessage = document.getElementById('inputMessage');
+let signature;
+let verification;
+
+// Content Update
+const keygenArea = document.getElementById('keygenArea');
+const signArea = document.getElementById('signArea');
+const verifyArea = document.getElementById('verifyArea');
+const receiveArea = document.getElementById('receiveArea');
+
+// Buttons
+const resetButton = document.getElementById('resetButton');
+const keygenButton = document.getElementById('keygenButton');
+const createSignatureButton = document.getElementById('signButton');
+const sendButton = document.getElementById('sendButton');
+const verifySignatureButton = document.getElementById('verifyButton');
+
+// Reset
+const reset = () => {
+  createSignatureButton.disabled = true;
+  sendButton.disabled = true;
+  verifySignatureButton.disabled = true;
+  keygenArea.innerHTML = "";
+  signArea.innerHTML = "";
+  verifyArea.innerHTML = "";
+  receiveArea.innerHTML = "";
+}
+reset();
+
+// Lấy thông điệp tu input
+const getInputMessage = () => {
+  return inputMessage.value;
+}
+
+// Enable button
+const enable = (button) => {
+  button.disabled = false;
+}
+
+// Disable button
+const disable = (button) => {
+  button.disabled = true;
+}
+
+//Event for reset button
+resetButton.addEventListener('click', function () {
+  reset();
+})
+
+//Event for keygen button
+keygenButton.addEventListener('click', function() {
+  const templateToRender =
+  `<div>
+  <p>
+  <span class="text-info font-weight-bold">Tạo khóa công khai</span>
+  <br>
+  <br><span class=text-danger>Chọn d ngẫu nhiên: </span>
+  <br><span class=text-primary><b>d</b> = ${d}</span>
+  <br><span class=text-danger>Tính điểm Q = dG</span>
+  <br><span class=text-primary>Điểm Q:</span>
+  <br><span class=text-primary><b>x</b>: ${Q.x.toString()}</span>
+  <br><span class=text-primary><b>y</b>: ${Q.y.toString()}</span>
+  <br>
+  <br><span id="divider">==================================================================</span>
+  </p>
+  </div>`
+  keygenArea.insertAdjacentHTML('beforeend', templateToRender);
+  keygenArea.scrollIntoView();
+  enable(createSignatureButton);
+})
+
+//Event for createSignature button
+createSignatureButton.addEventListener('click', function() {
+  signature = createSignature(getInputMessage());
+  const templateToRender =
+  `<div>
+  <p>
+  <span class="text-info font-weight-bold">Tạo chữ ký</span>
+  <br>
+  <br><span class=text-danger>Băm thông điệp:</span>
+  <br><span class=text-primary><b>e</b> = ${signature.e.toString()}</span>
+  <br><span class=text-danger>Các giá trị trung gian:</span>
+  <br><span class=text-primary><b>z</b> = ${signature.z.toString()}</span>
+  <br><span class=text-primary><b>k</b> = ${signature.k.toString()}</span>
+  <br><span class=text-danger>Tính điểm (x1, y1) = k.G</span>
+  <br><span class=text-primary><b>x<sub>1</sub></b> = ${signature.H.x.toString()}</span>
+  <br><span class=text-primary><b>y<sub>1</sub></b> = ${signature.H.y.toString()}</span>
+  <br><span class=text-danger>Chữ kí số là cặp (r, s):</span>
+  <br><span class=text-primary><b>r</b> = ${signature.pair.r.toString()}</span>
+  <br><span class=text-primary><b>s</b> = ${signature.pair.s.toString()}</span>
+  <br>
+  <br><span id="divider">==================================================================</span>
+  </p>
+  </div>`
+  signArea.insertAdjacentHTML('beforeend', templateToRender);
+  signArea.scrollIntoView();
+  enable(sendButton);
+});
+
+//Event for send button
+sendButton.addEventListener('click', function() {
+  const templateToRender =
+  `<div style="overflow-y: auto;">
+  <p>
+  <span class="text-info">Alice, you got a message from Bob!</span>
+  <br>
+  <p class="btn btn-primary btn-md" style="border-radius: 5px; max-width:235px; word-wrap:break-word;">
+  ${getInputMessage()}
+  </p>
+  </p>
+  </div>`
+  receiveArea.insertAdjacentHTML('beforeend', templateToRender);
+  receiveArea.scrollIntoView();
+  enable(verifySignatureButton);
+});
+
+//Event for verifySignature button
+verifySignatureButton.addEventListener('click', function() {
+  verification = verifySignature({ r: signature.pair.r, s: signature.pair.s}, getInputMessage());
+  const templateToRender =
+  `<div>
+  <p>
+  <span class="text-info font-weight-bold">Xác thực chữ ký</span>
+  <br>
+  <br><span class=text-danger>Băm thông điệp:</span>
+  <br><span class=text-primary><b>e</b> = ${verification.e.toString()}</span>
+  <br><span class=text-danger>Các giá trị trung gian:</span>
+  <br><span class=text-primary><b>z</b> = ${verification.z.toString()}</span>
+  <br><span class=text-primary><b>w</b> = ${verification.w.toString()}</span>
+  <br><span class=text-primary><b>u<sub>1</sub></b> = ${verification.u1.toString()}</span>
+  <br><span class=text-primary><b>u<sub>2</sub></b> = ${verification.u2.toString()}</span>
+  <br><span class=text-danger>Tính điểm C = u1 x G + u2 x Q: </span>
+  <br><span class=text-primary><b>x<sub>c</sub></b> = ${verification.C.x.toString()}</span>
+  <br><span class=text-primary><b>y<sub>c</sub></b> = ${verification.C.y.toString()}</span>
+  <br>
+  <br><span class=text-danger font-weight-bold>${verification.info} !</span>
+  <br>
+  <br><span id="divider">==================================================================</span>
+  </p>
+  </div`
+  verifyArea.insertAdjacentHTML('beforeend', templateToRender) ;
+  verifyArea.scrollIntoView();
+});

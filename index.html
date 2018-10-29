@@ -15,16 +15,16 @@
 		<div id="main">
 			<div id="section_1" class="row">
 				<div class="col-md-12 text-center">
-					<h1 class="title">Elliptic Curve Digital Signature Demo</h1>
+					<h1 class="title">Elliptic Curve Digital verification Demo</h1>
 				</div>
 			</div>
 			<div id="divider" class="col-md-12">
-				<br><br>
+
 			</div>
 
-			<div id="section_2" class="container">
+			<div id="section_2" class="container-fluid" style="padding: 0 25px;">
 				<div class="row">
-					<div class="item col-md-4">
+					<div class="item col-md-3">
 						<div class="item-text text-center">
 							<img class="sender-image" src="assets\male.png" alt="">
 							<form>
@@ -32,29 +32,57 @@
 									<label for="exampleFormControlTextarea1">Bob - The sender</label>
 									<textarea id="inputMessage" class="form-control" placeholder="Enter message ..." rows="5"></textarea>
 								</div>
-								<button type="submit" class="btn btn-info">Create Signature</button>
+								<button type="button" class="btn btn-info" id="keygenButton">Generate Key</button>
+								<hr style="border: none">
+								<button type="button" class="btn btn-info" id="signButton">Create Signature</button>
+								<hr style="border: none">
+								<button type="button" class="btn btn-info" id="sendButton">Send Message</button>
 							</form>
 						</div>
 					</div>
-					<div class="item col-md-4">
+					<div class="item col-md-6">
 						<div class="item-text">
 							<form>
 								<div class="form-group">
-									<label for="exampleFormControlTextarea1">Signing and Verification</label>
-									<textarea class="form-control" id="processingArea" rows="16"></textarea>
+									<label for="exampleFormControlTextarea1">Signing and Verification &nbsp;<span class="btn btn-sm btn-danger" id="resetButton"><i class="fa fa-refresh"></i> Reset</span></label>
+									<div class="form-control" id="information" contenteditable="false"  style="overflow-y: auto !important">
+<p><span class="text-info">Đường cong Elliptic sử dụng trong demo: <b>secp256k1</b></span>
+<br><span class="text-info">Phương trình đường cong: y2 = x3 + 7 (a = 0, b = 7)</span>
+<br><span class="text-primary">Định nghĩa trên trường hữu hạn Zp với</span>
+<br><span class="text-primary">p = 2256 - 232 - 29 - 28 - 27 - 26 - 24 - 1</span>
+<br><span class="text-primary">&nbsp;&nbsp;&nbsp;= FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE FFFFFC2F (256 bit)</span>
+<br><span class="text-success">Số phần tử của đường cong #E</span>
+<br><span class="text-success">n = FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE BAAEDCE6 AF48A03B BFD25E8C D0364141 (256 bit)</span>
+<br><span class="text-success">Điểm cơ sở</span>
+<br><span class="text-success">G (79BE667E F9DCBBAC 55A06295 CE870B07 029BFCDB 2DCE28D9 59F2815B 16F81798,</span>
+<br><span class="text-success">&nbsp;&nbsp;&nbsp;&nbsp;483ADA77 26A3C465 5DA4FBFC 0E1108A8 FD17B448 A6855419 9C47D08F FB10D4B8)</span>
+<br><span>Theo <a href="https://en.bitcoin.it/wiki/Secp256k1">https://en.bitcoin.it/wiki/Secp256k1</a>
+<br><span id="divider">==================================================================</span>
+</p>
+<div id="keygenArea">
+</div>
+<div id="signArea">
+</div>
+<div id="verifyArea">
+</div>
+									</div>
+
 								</div>
 							</form>
 						</div>
 					</div>
-					<div class="item col-md-4 text-center">
+					<div class="item col-md-3 text-center">
 						<div class="item-text">
 							<img class="receiver-image" src="assets\female.png" alt="">
 							<form>
 								<label for="exampleFormControlTextarea1">Alice - The receiver</label>
 								<div class="form-group">
-									<textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+									<div class="form-control" contenteditableid="false" id="receiver" style="overflow-y: auto;">
+<div id="receiveArea" class="text-left">
+</div>
+									</div>
 								</div>
-								<button type="submit" class="btn btn-info">Verify Signature</button>
+								<button type="button" class="btn btn-info" id="verifyButton">Verify</button>
 							</form>
 						</div>
 					</div>
@@ -72,6 +100,7 @@
 
 		<!-- Elliptic and Event handlers -->
 		<script src="scripts/main.js"></script>
+		<script src="scripts/event.js"></script>
 	</body>
 
 </html>

@@ -164,7 +164,7 @@ const createSignature = (message) => {
 
   while (true) {
     // 3) Chọn một số nguyên ngẫu nhiên k trong khoảng [1, n-1]
-    const k = BigInteger(10);
+    const k = randomBetween(1, bigN.minus(1));
       // 4: Tính H (x1, y1) = k. G;
     const H = scalarMultiply({ x: bigG.x, y: bigG.y }, k);
         // 5: Tính r = x1 mod n. Nếu r = 0, quay lại bước 3.

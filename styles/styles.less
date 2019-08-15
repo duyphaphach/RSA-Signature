@@ -1,59 +1,187 @@
 // out: ./styles.css, sourcemap: false, compress: true
+@color-background-particles: #303C6C;
+@color-background-function: white;
+@color-background-process: #e7e7e7;
+@color-input-border: #c1c2c3;
+@color-text-black: #000000e8;
+@color-input-border-hover: #F76C6C;
 
 #particles-js {
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background-color: #cc3f4b;
-  background-image: url("");
+  background-color: @color-background-particles;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% 50%;
   z-index: -1;
 }
 
+@font-face {
+  font-family: Sarabun-Bold;
+  src: url('../assets/Sarabun-Bold.ttf');
+}
+@font-face {
+  font-family: Sarabun-BoldItalic;
+  src: url('../assets/Sarabun-BoldItalic.ttf');
+}
+@font-face {
+  font-family: Sarabun-Italic;
+  src: url('../assets/Sarabun-Italic.ttf');
+}
+@font-face {
+  font-family: Sarabun-Regular;
+  src: url('../assets/Sarabun-Regular.ttf');
+}
+
+html {
+  width: 100vw;
+}
+
 body {
   overflow-x: hidden;
+  //font-family: 'Sarabun-Regular';
+  font-weight: 500;
 }
+
+
 
 #main {
-  z-index: 1;
-  #section_1 {
-    .title {
-      color: white;
+  h1 {
+    font-size: 4rem;
+    margin-top: 25px;
+    color: white;
+    font-family: Sarabun-Bold;
+    font-weight: 400;
+  }
+
+  h2,h3,h4 {
+    font-family: Sarabun-Bold;
+  }
+
+  .form-control {
+    color: @color-text-black;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid @color-input-border;
+    border-radius: 2px;
+
+    &:hover {
+      border-color: @color-input-border-hover;
+    }
+
+    &:focus {
+      border-color: @color-input-border-hover;
+      box-shadow: 0 0 0 1px @color-input-border-hover;
     }
   }
-  #section_2 {
-    .item {
-        .item-text {
-          height: 85vh;
-          background-color: white;
-          padding: 10px 15px;
 
-          border-radius: 3px;
-          -webkit-box-shadow: 0px 0px 10px 0px rgba(46,1,1,1);
-          -moz-box-shadow: 0px 0px 10px 0px rgba(46,1,1,1);
-          box-shadow: 0px 0px 10px 0px rgba(46,1,1,1);
+  .column {
+    display: inline-block;
+    float: left;
+    width: 50%;
+    padding: 25px 25px;
 
-          img {
-            width: 120px;
-            height: auto;
-            border: 1px solid lighten(grey, 20%);
-            border-radius: 3px;
-            margin-bottom: 10px;
-          }
+    .function,
+    .process {
+      display: inline-block;
+      float: left;
+      padding: 15px 25px;
+
+      .avatar {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+      }
+
+      input {
+        display: block;
+      }
+    }
+
+    .function {
+      width: 40%;
+      text-align: center;
+      background: @color-background-function;
+      padding-top: 25px;
+      padding-bottom: 35px;
+
+      .button-group {
+        button {
+          display: block;
+          margin: 0 auto;
+          margin-top: 15px;
+          min-width: 145px;
         }
+      }
+    }
+
+    .process {
+      width: 60%;
+      height: 95%;
+      margin-top: 2%;
+      background: @color-background-process;
+
+      .form-control {
+        border: none;
+        margin-bottom: 15px;
+        font-size: 12px;
+      }
+
+      .label {
+        margin-bottom: 5px;
+        font-weight: 400;
+      }
+
+      button {
+        margin-bottom: 15px;
+      }
+
+      .process-info {
+        height: 150px;
+        max-height: 150px;
+        padding: .375rem .75rem;
+        word-wrap: break-word;
+        overflow-y: scroll;
+
+        .message-noti {
+          font-size: 12px;
+        }
+        .message-item {
+          display: inline-block;
+          max-width: 80%;
+          background: blue;
+          color: white;
+          padding: 5px 10px;
+          text-align: left;
+          font-size: 14px;
+          border-radius: 4px;
+        }
+
+        &#warning {
+          height: ;
+        }
+      }
     }
   }
-}
-#divider {
-  height: 20px;
-}
-#receiver {
-  height: 183px;
-}
-#information {
-  font-size: 13px;
-  line-height: normal;
-  height: 76vh;
+
+  .sender {
+    .function {
+      .avatar {
+        background: url('../assets/male.png');
+        background-size: cover;
+        background-position: 0 0;
+      }
+    }
+  }
+
+  .receiver {
+    .function {
+      .avatar {
+        background: url('../assets/female.png');
+        background-size: cover;
+        background-position: 0 0;
+      }
+    }
+  }
 }

@@ -5,100 +5,96 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-		<link rel="stylesheet" href="styles/styles.css">
+		<link rel="stylesheet" href="/styles/bootstrap.min.css">
+		<link rel="stylesheet" href="/styles/styles.css">
 		<title>EDCSA Demo</title>
 	</head>
 
-	<body style="overflow-x: hidden">
+	<body>
 		<div id="particles-js"></div>
 		<div id="main">
-			<div id="section_1" class="row">
+			<div class="row">
 				<div class="col-md-12 text-center">
-					<h1 class="title">Elliptic Curve Digital Signature Demo</h1>
+					<h1>Digital Signature Demo</h1>
 				</div>
 			</div>
-			<div id="divider" class="col-md-12">
-			</div>
-			<div id="section_2" class="container-fluid" style="padding: 0 25px;">
-				<div class="row">
-					<div class="item col-md-3">
-						<div class="item-text text-center">
-							<img class="sender-image" src="assets\male.png" alt="">
-							<form>
-								<div class="form-group">
-									<label for="exampleFormControlTextarea1">Bob - The sender</label>
-									<textarea id="inputMessage" class="form-control" placeholder="Enter message ..." rows="7"></textarea>
-								</div>
-								<button type="button" class="btn btn-info" id="keygenButton">Generate Key</button>
-								<hr style="border: none">
-								<button type="button" class="btn btn-info" id="signButton">Create Signature</button>
-								<hr style="border: none">
-								<button type="button" class="btn btn-info" id="sendButton">Send Message</button>
-							</form>
-						</div>
+			<div class="row">
+				<div class="column sender">
+					<div class="function">
+						<div class="avatar"></div>
+						<h2 class="name">Bob - Sender</h2>
+						<textarea id="dataTextarea" class="message form-control" rows="8́" placeholder="Enter your message"></textarea>
+						<div class="button-group">
+						<button type="button" id="computeHash" class="sign btn btn-sm btn-primary">Compute Hash</button>
+						<button type="button" id="createSignature" class="encrypt btn btn-sm btn-danger">Create Signature</button>
+						<button type="button" id="send" class="send btn btn-sm btn-info">Send</button>
 					</div>
-					<div class="item col-md-6">
-						<div class="item-text">
-							<form>
-								<div class="form-group">
-									<label for="exampleFormControlTextarea1">Signing and Verification &nbsp;<span class="btn btn-sm btn-danger" id="resetButton"><i class="fa fa-refresh"></i> Reset</span></label>
-									<div class="form-control" id="information" contenteditable="false"  style="overflow-y: auto !important">
-<p><span class="text-info">Đường cong Elliptic sử dụng trong demo: <b>secp256k1</b></span>
-<br><span class="text-info">Phương trình đường cong: y<sup>2</sup> = x<sup>3</sup> + 7 (a = 0, b = 7)</span>
-<br><span class="text-primary">Định nghĩa trên trường hữu hạn Zp với</span>
-<br><span class="text-primary">p = 2<sup>256</sup> - 2<sup>32</sup> - 2<sup>9</sup> - 2<sup>8</sup> - 2<sup>7</sup> - 2<sup>6</sup> - 2<sup>4</sup> - 1</span>
-<br><span class="text-primary">&nbsp;&nbsp;&nbsp;= FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE FFFFFC2F (256 bit)</span>
-<br><span class="text-success">Số phần tử của đường cong #E</span>
-<br><span class="text-success">n = FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE BAAEDCE6 AF48A03B BFD25E8C D0364141 (256 bit)</span>
-<br><span class="text-success">Điểm cơ sở</span>
-<br><span class="text-success">G (79BE667E F9DCBBAC 55A06295 CE870B07 029BFCDB 2DCE28D9 59F2815B 16F81798,</span>
-<br><span class="text-success">&nbsp;&nbsp;&nbsp;&nbsp;483ADA77 26A3C465 5DA4FBFC 0E1108A8 FD17B448 A6855419 9C47D08F FB10D4B8)</span>
-<br><span>Theo <a href="https://en.bitcoin.it/wiki/Secp256k1">https://en.bitcoin.it/wiki/Secp256k1</a>
-<br><span id="divider">==================================================================</span>
-</p>
-<div id="keygenArea">
-</div>
-<div id="signArea">
-</div>
-<div id="verifyArea">
-</div>
-									</div>
+					</div>
+					<div class="process">
+						<div class="label public-key-image">Public Key</div>
+						<textarea type="text" placeholder="Public Key" id="publicKey" rows="3" class="public-key form-control" disabled></textarea>
 
-								</div>
-							</form>
+						<div class="label private-key-image">Private Key</div>
+						<textarea type="text" placeholder="Private Key" id="privateKey" rows="3" class="private-key form-control" disabled></textarea>
+
+						<button type="button" id="keygen" class="sign btn btn-sm btn-warning">Generate Key</button>
+
+						<div class="label public-key-image">Hash value</div>
+						<input type="text" id="hashInput" placeholder="Public Key" class="public-key form-control" disabled>
+
+						<div class="label private-key-image">Digital Signature</div>
+						<textarea type="text" id="signatureTextarea" placeholder="Private Key" rows="3" class="public-key form-control" disabled></textarea>
+
+<!--						<div class="label">Details</div>-->
+
+<!--						<div class="process-info form-control">-->
+<!--							Process info here-->
+<!--						</div>-->
+					</div>
+				</div>
+				<div class="column receiver">
+					<div class="function">
+						<div class="avatar"></div>
+						<h2 class="name">Alice - Receiver</h2>
+						<div class="button-group">
+							<button type="button" id="checkIntegrity" class="sign btn btn-sm btn-danger">Check Integrity</button>
+<!--							<button type="button" class="encrypt btn btn-sm btn-danger">Decrypt Data</button>-->
+<!--							<button type="button" class="send btn btn-sm btn-info">Send</button>-->
 						</div>
 					</div>
-					<div class="item col-md-3 text-center">
-						<div class="item-text">
-							<img class="receiver-image" src="assets\female.png" alt="">
-							<form>
-								<label for="exampleFormControlTextarea1">Alice - The receiver</label>
-								<div class="form-group">
-									<div class="form-control" contenteditableid="false" id="receiver" style="overflow-y: auto;">
-<div id="receiveArea" class="text-left">
-</div>
-									</div>
-								</div>
-								<button type="button" class="btn btn-info" id="verifyButton">Verify</button>
-							</form>
+					<div class="process">
+<!--						<div class="label public-key-image">Public Key</div>-->
+<!--						<input type="text" placeholder="Public Key" class="public-key form-control" disabled>-->
+
+						<div class="label private-key-image">Sender Signature</div>
+						<input type="text" id="reveiverSenderSignature" placeholder="Sender Signature" class="public-key form-control" disabled>
+
+<!--						<div class="label private-key-image">Message Hash</div>-->
+<!--						<input type="text" placeholder="Sender Signature" class="public-key form-control" disabled>-->
+<!--						<button type="button" class="sign btn btn-sm btn-warning">Generate Key</button>-->
+
+						<div class="label">Message</div>
+						<div class="process-info form-control" id="messages">
+
 						</div>
+
+						<div class="label">Integrity check</div>
+						<input class="form-control" id="warning" disabled>
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<!-- Bootstrap and particles libraries -->
-		<script src="scripts/jquery.min.js"></script>
-		<script src="scripts/popper.min.js"></script>
-		<script src="scripts/bootstrap.min.js"></script>
+		<script src="/scripts/jquery.min.js"></script>
+		<script src="/scripts/popper.min.js"></script>
+		<script src="/scripts/bootstrap.min.js"></script>
 
-		<script src="scripts/particles.min.js"></script>
-		<script src="scripts/particlesStart.js"></script>
+		<script src="/scripts/particles.min.js"></script>
+		<script src="/scripts/particlesStart.js"></script>
 
 		<!-- Elliptic and Event handlers -->
-		<script src="scripts/main.js"></script>
-		<script src="scripts/event.js"></script>
+		<script src="/scripts/main.js"></script>
+		<script src="/scripts/event.js"></script>
 	</body>
 
 </html>

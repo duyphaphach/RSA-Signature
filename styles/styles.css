@@ -1,1 +1,146 @@
-#particles-js{position:fixed;width:100vw;height:100vh;background-color:#cc3f4b;background-image:url("");background-repeat:no-repeat;background-size:cover;background-position:50% 50%;z-index:-1}body{overflow-x:hidden}#main{z-index:1}#main #section_1 .title{color:white}#main #section_2 .item .item-text{height:85vh;background-color:white;padding:10px 15px;border-radius:3px;-webkit-box-shadow:0 0 10px 0 #2e0101;-moz-box-shadow:0 0 10px 0 #2e0101;box-shadow:0 0 10px 0 #2e0101}#main #section_2 .item .item-text img{width:120px;height:auto;border:1px solid #b3b3b3;border-radius:3px;margin-bottom:10px}#divider{height:20px}#receiver{height:183px}#information{font-size:13px;line-height:normal;height:76vh}
+#particles-js {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: #303C6C;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+  z-index: -1;
+}
+@font-face {
+  font-family: Sarabun-Bold;
+  src: url('../assets/Sarabun-Bold.ttf');
+}
+@font-face {
+  font-family: Sarabun-BoldItalic;
+  src: url('../assets/Sarabun-BoldItalic.ttf');
+}
+@font-face {
+  font-family: Sarabun-Italic;
+  src: url('../assets/Sarabun-Italic.ttf');
+}
+@font-face {
+  font-family: Sarabun-Regular;
+  src: url('../assets/Sarabun-Regular.ttf');
+}
+html {
+  width: 100vw;
+}
+body {
+  overflow-x: hidden;
+  font-weight: 500;
+}
+#main h1 {
+  font-size: 4rem;
+  margin-top: 25px;
+  color: white;
+  font-family: Sarabun-Bold;
+  font-weight: 400;
+}
+#main h2,
+#main h3,
+#main h4 {
+  font-family: Sarabun-Bold;
+}
+#main .form-control {
+  color: #000000e8;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #c1c2c3;
+  border-radius: 2px;
+}
+#main .form-control:hover {
+  border-color: #F76C6C;
+}
+#main .form-control:focus {
+  border-color: #F76C6C;
+  box-shadow: 0 0 0 1px #F76C6C;
+}
+#main .column {
+  display: inline-block;
+  float: left;
+  width: 50%;
+  padding: 25px 25px;
+}
+#main .column .function,
+#main .column .process {
+  display: inline-block;
+  float: left;
+  padding: 15px 25px;
+}
+#main .column .function .avatar,
+#main .column .process .avatar {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+#main .column .function input,
+#main .column .process input {
+  display: block;
+}
+#main .column .function {
+  width: 40%;
+  text-align: center;
+  background: white;
+  padding-top: 25px;
+  padding-bottom: 35px;
+}
+#main .column .function .button-group button {
+  display: block;
+  margin: 0 auto;
+  margin-top: 15px;
+  min-width: 145px;
+}
+#main .column .process {
+  width: 60%;
+  height: 95%;
+  margin-top: 2%;
+  background: #e7e7e7;
+}
+#main .column .process .form-control {
+  border: none;
+  margin-bottom: 15px;
+  font-size: 12px;
+}
+#main .column .process .label {
+  margin-bottom: 5px;
+  font-weight: 400;
+}
+#main .column .process button {
+  margin-bottom: 15px;
+}
+#main .column .process .process-info {
+  height: 150px;
+  max-height: 150px;
+  padding: 0.375rem 0.75rem;
+  word-wrap: break-word;
+  overflow-y: scroll;
+}
+#main .column .process .process-info .message-noti {
+  font-size: 12px;
+}
+#main .column .process .process-info .message-item {
+  display: inline-block;
+  max-width: 80%;
+  background: blue;
+  color: white;
+  padding: 5px 10px;
+  text-align: left;
+  font-size: 14px;
+  border-radius: 4px;
+}
+#main .column .process .process-info#warning {
+  height: ;
+}
+#main .sender .function .avatar {
+  background: url('../assets/male.png');
+  background-size: cover;
+  background-position: 0 0;
+}
+#main .receiver .function .avatar {
+  background: url('../assets/female.png');
+  background-size: cover;
+  background-position: 0 0;
+}
+/*# sourceMappingURL=styles.css.map */

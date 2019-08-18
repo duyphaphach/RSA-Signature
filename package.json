@@ -13,7 +13,7 @@
     "bigi": "^1.4.2",
     "font-awesome": "^4.7.0",
     "forge": "^2.3.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "js-sha256": "^0.9.0",
     "jsencrypt": "^3.0.0-rc.1",
     "node-forge": "^0.8.5",
